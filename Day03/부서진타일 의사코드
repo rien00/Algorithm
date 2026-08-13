@@ -1,0 +1,47 @@
+부서진 타일 의사 코드
+
+입력: TC
+
+for t in 1... TC :
+	N,M 
+	grid <- N개의 문자열(길이 M) 입력
+	
+	covered <- NxM 크기의 2차원 배열, 모두 false로 초기화
+	possible <- true  // 이 테스트 케이스가 가능한지 여부
+	
+	
+	for i in 0..N-1:
+		for j in 0.. M-1:
+			if possible == false:
+				break; // 이미 실패 확정이면 끝
+				
+				if grid[i][j] == '#' and covered[i][j] == false:
+					// 이 칸은 반드시 타일의 왼쪽 위 모서리여야 함
+					if i+1 >= N or j+1 >=M:
+					possible <- false
+					continue
+					
+					if grid[i][j+1] != '#' or covered[i][j+1] == true:
+						possible <- false
+						continue
+					if grid[i+1][j] != '#' or covered[i+1][j] == true:
+						possible <- false
+						continue
+					if grid[i+1][j+1] != '#' or covered[i+1][j+1] == true:
+						possible <- false
+						continue
+						
+					// 네 칸 모두 조건 통과 -> 타일 배치 확정 
+					covered[i][j] <- true
+					covered[i][j+1]] <- true
+					covered[i+1][j] <- true
+					covered[i+1][j+1] <- true
+			
+			
+			if possible == true:
+				print '#t YES'
+				
+			else:
+				print'#t NO'
+					
+					
