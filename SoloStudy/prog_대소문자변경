@@ -1,0 +1,37 @@
+prog_대소문자바꾸기 문제
+
+[문제]
+
+- 알파벳 문자열 str 입력
+- 대문자는 소문자로, 소문자는 대문자로 바꿔서 출력
+- aBcDeFg -> AbCdEfG
+
+[내 원래 코드 문제점]
+
+- Character.isUpperCase(a): a가 String인데 char 하나만 받음 -> 컴파일 에러
+- a+= ... : 반복문 안에서 a 자기 자신에 계속 문자를 붙임 -> a.length()가 계속 늘어나 i<a.length() 조건이 절대 거짓이 안 됨 -> 무한루프
+- 결과를 담을 별도 공간이 없어서 설령 안 터져도 원본+변환 결과가 뒤섞임
+
+[StringBuilder 쓰는 이유]
+
+- String은 불변 객체. a += x 하면 기존 a를 수정하는게 아니라 매번 새 String 객체를 만들어서 a가 그 새 객체를 가리키게 함
+- 반복문 안에서 a += 를 N번 하면 총 비용이 1 + 2 + 3 + ... + N = O(N^2)
+- StringBuilder는 내부적으로 가변 버퍼를 갖고 있어 append해도 새로 안 만들고 그 자리에서 이어 붙임 -> N번 append 해도 총 비용 O(N)
+- 지금 문제는 N <= 20이라 체감이 안 되지만 "결과를 누적해서 만든다"는 패턴에선 처음부터 StringBuilder 쓰는게 맞음
+
+
+[char c = a.charAt(i) 를 쓰는 이유]
+
+- Character.isUpperCase / toUpperCase / toLowerCase는 전부 문자 하나(char) 단위로 동작하도록 설계된 메소드
+- "문자열 전체가 대문자냐"는 의미가 없고 "i번째 문자가 대문자냐"만 의미 있음
+- a.charAt(i)로 인덱스 i의 문자 하나를 꺼내서 c에 담아두면 이후 Character 관련 메소드에 타입 맞춰서 넘길 수 있음
+- 매번 a.charAt(i)를 다시 호출하는 대신 변수에 한 번 담아두면 코드 의도가 명확해지고 중복 호출도 줄어듦
+
+
+[풀이 흐름]
+1. 문자열 a 입력받기
+2. 결과를 담을 StringBuilder sb 만들기
+3. a의 길이만큼 ifmf 0부터 순회
+4. char c = a.charAt(i)로 현재 문자 꺼내기
+5. c가 대문자면 소문자로 바꿔 sb에 추가, 아니면 대문자로 바꿔 sb에 추가 
+6. 반복 끝나면 sb 출력

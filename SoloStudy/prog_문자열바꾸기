@@ -1,0 +1,52 @@
+프로그래머스 - 문자열 겹쳐쓰
+
+문제 링크: https://school.programmers.co.kr/learn/courses/30/lessons/181943
+
+1. 문제 한줄 요약
+my_string의 인덱스 s부터 overwrite_string 길이만큼을 overwrite_string으로 덮어쓴 문자열을 리턴한다.
+
+- 제한: 1 <= overwrite_string.length <= my_string.length <= 1,000
+- 0 <= s <= my_string.length - overwrite_string.length 
+- N이 최대 1,000 -> 시간복잡도는 신경 쓸 필요 없음. 핵심은 인덱스를 정확히 맞추는 것
+
+2. 내가 헷갈렸던 포인트 
+(1) 시작 인덱스: s vs s-1
+	- 처음에 i가 s-1 부터 시작한다고 생각 -> off-by-one 오류
+	- 예제1로 반례 검증: my_string = "He11oWor1d", overwrite_string="llWorl", s = 2
+		- s(=2) 부터 시작해야 인덱스 2~8("11oWor1")이 "lloWorl"로 바뀌어 "HelloWorld" 가 나옴
+		- s-1(=1) 부터 시작하면 인덱스 1~7이 바뀌어 "HlloWorl1d" -> 틀림
+	- 결론: 반복 변수는 s부터 시작, overwrite_stringdml j 번째 문자는 my_string의 s+j 위치에 대응된다.
+	
+(2) String은 불변 객체
+	- my_string.charAt(i) = 'x' 같은 문법 자체가 존재하지 않음. charAt()은 읽기 전용
+	- 문자를 바꿔치기하려면 가변 컨테이너로 옮겨야 함 -> 두 가지 방식 비교 
+	
+[A] 방식                변환(String->컨테이너)            쓰기 				되돌리기(컨테이너 -> String)
+	char[] 			my_string_toCharArray() 		arr[i] = ch			String.valueOf(arr) or new String(arr)
+[B] StringBuilder	new StringBuilder(my_string)	sb.setCharAt(i, ch)	sb.toString()
+
+
+- 경계값 체크가 필요 없는 이유
+	- j의 최댓값은 overwrite_string.length() - 1
+	- s + j(max) = s + overwrite_string.length() - 1 <= my_string.length() -1 (제한사항에서 보장)
+
+3. 메소드
+A 방법
+toCharArray() , 시그니처: char[]toCharArray(), 문자열의 내용을 새로운 char[] 배열로 복사해서 만들어줌, 반환값: 문자 하나 하나가 담긴 배열
+charAt(int index), 시그니처: char charAt(int index), 지정한 인덱스의 문자 하나를 읽기만 함, 해당 위치의 char
+String.valueOf(char[] data), 시그니처: static StringvalueOf(char[] data), char[] 전체를 하나의 새 String 객체로 변환 , 변환된 String
+
+B 방법
+
+new StringBuilder(String str), 시그니처: StringBuilder(String str), 하는일: str을 초기값으로 갖는 가변 버퍼 생성. 내부적으로 용량은 str.length() + 16, 반환값: StringBuilder 객체
+void setCharAt(int index, char ch), 시그니처: void setCharAt(int index, char ch), 하는 일: 지정 인덱스의 문자를 ch로 직접 엎어씀(A의 arr[i] = ch와 동일한 역할), 반환값: 없음(void)
+toString(), 시그니처: String toString(), 하는일: 현재 버퍼의 내용을 새 String 객체로 복사해서 반환, 반환값: String
+
+
+
+
+
+
+
+
+
