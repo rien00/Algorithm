@@ -5,6 +5,7 @@
 ## 구성
 
 - `Day01/` ~ `Day03/` : 날짜별 알고리즘 문제 풀이 (Java)
+- `SoloStudy/` : 개인 연습 문제 풀이 및 학습 노트 (Java)
 - `sw1859_millionaire_project.py`, `sw1868_minesweeper.py` : Python 풀이
 
 ## Day01
@@ -25,3 +26,7 @@
 - 단속
 - 베스트앨범
 - 파리퇴치
+
+## SoloStudy
+- 대소문자바꾸기 (학습 노트: `prog_대소문자변경`)
+- 문자열_겹쳐쓰기 (학습 노트: `prog_문자열바꾸기`)
