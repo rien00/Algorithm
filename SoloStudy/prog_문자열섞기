@@ -1,0 +1,121 @@
+문제: 문자열 섞기(프로그래머스)
+
+문제 설명: 길이가 같은 두 문자열 str1, str2가 주어지고
+		 두 문자열의 각 문자가 앞에서부터 서로 번갈아가면서 한 번 씩 등장하는 
+		 문자열을 만들어 return 하는 함수를 완성
+		 
+제한사항
+-> 1 <= str1의 길이 = str2의 길이 <= 10
+-> str1과 str2는 알파벳 소문자로 이루어진 문자열 
+
+정답 코드
+
+1. String[] arr = new String[str1.length() + str2.length()];
+		
+		for(int i = 0; i < arr.length; i++) {
+			if (i % 2 == 0) {
+				arr[i] = String.valueOf(str2.charAt(i / 2));
+			} else {
+				arr[i] = String.valueOf(str1.charAt(i / 2));
+			}
+		}
+ 
+   return String.join("", arr);
+		
+		
+2. public String solution(String str1, String str2) {
+    StringBuilder sb = new StringBuilder();
+    for (int i = 0; i < str1.length(); i++) {
+        sb.append(str1.charAt(i)).append(str2.charAt(i));
+    }
+    return sb.toString();
+}
+
+
+코드 개념 설명 
+
+1. char vs String
+-> char는 문자 '한 글자', String은 문자들을 이어붙인 '문자열 전체'
+
+	정확한 정의:
+		- char: 원시 타입. 유니코드 문자 하나를 2바이트로 저장 
+		- String: 클래스(객체). 내부적으로 char 배열을 감싸고 있는 불변 객체
+	
+	코드 적용: str1.charAt(i)는 str1이라는 String에서 i번째 문자 하나를 char 타입으로 꺼내는 것
+	
+2. charAt(int index)
+	- 소속: String클래스의 메서드
+	- 반환 타입: char
+	- 동작 원리: 문자열이 내부적으로 갖고 있는 문자 배열에서 index 위치의 값을 바로 꺼냄
+	- index가 0 ~ length()-1 범위를 벗어나면 StringIndexOutOfBoundsException 발생
+
+3. String.valueOf()
+	- 목적: char, int, boolean, Object 등 다양한 타입을 String으로 변환하는 정적 메서드
+	- String.valueOf(char c)는 문자 하나짜리 String을 새로 만들어 반환(내부적으로 new String(char[]{c})와 유사
+	- 필요 이유: charAt()은 char를 반환하는데, 담을 배열이 String[]이라 타입이 안 맞음 -> valueOf()로 감싸서 String으로 변환한 뒤 대입
+	ex) arr[i] = String.valueOf(str1.charAt(i)); // char -> String 변환 후 대입
+	
+4. StringBuilder
+	- 목적: 문자열을 반복적으로 이어붙일 떄의 비효율을 피하기 위해 사용
+	- 배경: String은 불벼녀 객체라서 + 로 이어붙일 때마다 새로운 String 객체가 매번 생성됨
+		   반복문 안에서 이렇게 하면 문자열이 길어질수록 낭비가 커짐
+	- StringBuilder는 내부에 크기가 늘어날 수 있는 문자 버퍼(char배열)을 갖고 잇어 append()할 때마다 새 객체를 만들지 않고 그 버퍼에 직접 추가함
+	- append(): 문자/문자열/숫자 등을 버퍼 끝에 이어붙이는 메서드. 자기 자신을(this) 반환하므로
+				sb.append(a).append(b) 처럼 체이닝 가능
+	ex) StringBuilder sb = new StringBuilder();
+		sb.append('a').append("bc"); // 내부 버퍼: "abc"
+		
+		
+5. toString()
+	- 모든 객체가 기본적으로 갖고 있는 메서드(Object 클래스에 정의됨)
+	- 기본 동작: 클래스이름@해시코드 형태의 문자열을 반환
+		- System.out.println(arr) 을 했을 때 [Ljava.lang.String;@1b6d3586 같은 게 찍힌 이유
+		  배열은 toString()을 따로 재정의하지 않아서 기본 Object.toString()이 호출됨
+	- StringBuilder는 이 메서드를 오버라이드해서 지금까지 버퍼에 쌓인 문자들을 실제 String으로 만들어 반환하도록 재정의 함
+	- StringBuilder 자체는 String이 아니므로 메서드에서 String을 리턴하려면 반드시 마지막에 .toString()을 호출해야함 
+	ex) return sb.toString(); // StringBuilder -> String 변환
+	
+	
+6. String.join("", arr)
+	- 시그니처: String.join(CharSequence delimiter, CharSequence...elements)
+	- 목적: 여러 문자열(배열이나 가변 인자)을 구분자로 이어서 하나의 문자열로 합침
+	- 첫 번째 인자가 구분자:""(빈 문자열)을 주면 원소 사이에 아무것도 넣지 않고 그냥 붙임 
+	- 내부적으로는 StringJoiner를 사용해 구현되어 있음(원리는 StringBuilder와 비슷하게 버퍼에 이어붙이는 방식)
+	ex) String.join(",", "a", "b", "c"); // "a,b,c"
+		String.join("", arr); // arr의 모든 원소를 구분자 없이 이어붙임
+		
+7. 헷갈렸던 부분 정리
+
+헷갈렸던 지점                         | 원인                                                  | 해결
+----------------------------------|---------------------------------------------------|---------------------------------------------
+arr[i] = str1.charAt(i) 에러      | char와 String은 다른 타입인데 그대로 대입함       | String.valueOf(char)로 변환 후 대입
+
+StringIndexOutOfBoundsException   | 결과 배열 arr의 인덱스 i를 원본 문자열 인덱스로    | i 대신 i / 2를 사용해 원본 문자열 인덱스 계산
+                                  | 그대로 사용함. arr은 2n칸, 원본 문자열은 n칸임    |
+                                  
+결과 순서가 뒤바뀜                | 홀수·짝수 조건에 str1, str2를 반대로 배정함        | 짝수 인덱스는 str1, 홀수 인덱스는 str2로 수정
+(bababababa vs ababababab)        |                                                   |
+
+println(arr)이 이상한 값 출력     | 배열은 toString()을 재정의하지 않아 주소값 출력    | Arrays.toString(arr) 사용
+
+return 문이 없었음                | 메서드 반환 타입은 String인데 String[]은 반환 불가  | String.join("", arr) 또는 StringBuilder 사용
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
